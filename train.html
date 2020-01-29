@@ -1,0 +1,708 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<style>
+body, body * { padding: 0px; margin: 0px; font-size: 19pt; }
+td.nam { width: 182px;}
+table { table-layout:fixed; text-align:center; width: 982px; border-collapse: collapse; background: silver;}
+tr.rot { height: 160px; }
+tr.cl7, tr.cl8 {border-top: 1px solid black;}
+td.nam { border: 1px dotted gray; }
+td.rot { width: 40px; border: 1px dotted gray; }
+p.rot {
+	display: block; transform: rotate(-90deg); height: 38px; margin: 0 0 0 -56.5;
+	border: none; width: 158px; text-align: left; white-space:nowrap;}
+p.rot:before { content:''; width:10; padding-top: 0; display:inline-block; vertical-align:middle; height: 40px;}
+tr.cal {height: 35px; }
+p.cal, p.sel { font-size: 15pt; }
+td.rot p.cal:before {content: '';}
+td.nam p.cal:after {content: '';}
+
+
+td.sk1, td.sk2, td.sk3, td.sk4, td.sk5, button.def, tr.def td.nam, tr.def td.sk0 {	background: #63CB5A;}
+td.sk6, td.sk7, td.sk8, td.sk9, td.skA, button.off, tr.off td.nam, tr.off td.sk0 {	background: #EF5D5A;}
+td.skB, td.skC, td.skD, td.skE, td.skF, button.psi, tr.psi td.nam, tr.psi td.sk0 {	background: #848ED6;}
+.mid {	background: #E7CF6B;}
+hr { background: black; }
+button.qv {padding: 0px; margin: 0px; width: 100px; height: 100px;}
+select#selan {width: 206px; height: 40px; padding: 0px; margin: 6px 0px 0 4; font-size: 16pt; display: block; border: 1px solid gray;}
+button.pos { height: 50px; width: 100px; margin-left: 5px;}
+div#pos button:nth-child(1) { margin-left: 3px; }
+tr.cal td.nam {text-align: left;  border: 1px dotted darkgray;  border-right: 1px solid black;}
+button.sel {display: inline-block; width: 34px; height: 34px; float: left; margin-right: 2px;}
+button.sel + p {display: inline-block; width: 172px; height: 34px; margin-top: 5px;  overflow: hidden;  white-space: nowrap;}
+
+
+td.nam, td.sk5, td.skA, td.skF { border-right: 1px solid black;}
+tr td.nam p { font-size: 19pt; }
+</style>
+<script>
+var skillField = ["ns1","ns2","ns3","ns4","ns5","ns6","ns7","ns8","ns9","nsA","nsB","nsC","nsD","nsE","nsF"];
+var alf = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O"];
+var al1 = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"];
+var skillName = {
+"ns1": {"en": "Tackling",   "ru": "Отбор мяча" },
+"ns2": {"en": "Marking",    "ru": "Опека"      },
+"ns3": {"en": "Position.",  "ru": "Позиции"    },
+"ns4": {"en": "Heading",    "ru": "Голова"     },
+"ns5": {"en": "Bravery",    "ru": "Храбрость"  },
+"ns6": {"en": "Passing",    "ru": "Передача"   },
+"ns7": {"en": "Dribbling",  "ru": "Дриблинг"   },
+"ns8": {"en": "Crossing",   "ru": "Навес"      },
+"ns9": {"en": "Shooting",   "ru": "Удар"       },
+"nsA": {"en": "Finishing",  "ru": "Завершение" },
+"nsB": {"en": "Fitness",    "ru": "Физ. форма" },
+"nsC": {"en": "Strength",   "ru": "Сила"       },
+"nsD": {"en": "Aggression", "ru": "Агрессия"   },
+"nsE": {"en": "Speed",      "ru": "Скорость"   },
+"nsF": {"en": "Creativity", "ru": "Креатив"    }
+};
+var drillName = {
+"d1": {"en": "P, G & S!        ", "ru": "Пас, рывок, удар    ", "tep": {"p": 2, "sk": [0,0,0,0,0, 1,0,0,1,0, 0,0,0,1,0]}},
+"d2": {"en": "Fast C-Attacks   ", "ru": "Быстрые контратаки  ", "tep": {"p": 5, "sk": [0,0,0,0,0, 1,0,1,0,1, 0,0,0,0,1]}},
+"d3": {"en": "Skill Drill      ", "ru": "Тренировка техники  ", "tep": {"p": 1, "sk": [0,0,0,1,0, 0,1,0,0,0, 0,0,0,0,1]}},
+"d4": {"en": "Shooting Tech    ", "ru": "Техника ударов      ", "tep": {"p": 3, "sk": [0,0,0,0,0, 0,0,0,1,1, 0,1,0,0,0]}},
+"d5": {"en": "Set-P Delivery   ", "ru": "Стандарты           ", "tep": {"p": 3, "sk": [0,1,0,1,0, 0,0,1,1,0, 0,0,0,0,0]}},
+"d6": {"en": "Slalom Dribble   ", "ru": "Слалом              ", "tep": {"p": 4, "sk": [0,0,0,0,0, 1,1,0,0,0, 1,0,0,1,0]}},
+"d7": {"en": "Wing Play        ", "ru": "Игра флангами       ", "tep": {"p": 4, "sk": [0,0,0,1,0, 0,0,1,1,1, 0,0,0,0,0]}},
+"d8": {"en": "1-On-1 Finishing ", "ru": "Один на один        ", "tep": {"p": 2, "sk": [1,0,0,0,0, 0,1,0,0,1, 0,0,0,0,0]}},
+"d9": {"en": "Press the Play   ", "ru": "Прессинг            ", "tep": {"p": 4, "sk": [1,1,1,0,1, 0,0,0,0,0, 0,0,1,0,0]}},
+"dA": {"en": "Piggy in the Mid ", "ru": "Собачка             ", "tep": {"p": 2, "sk": [1,0,1,0,0, 1,0,0,0,0, 1,0,1,0,0]}},
+"dB": {"en": "GK Training      ", "ru": "Тренировка вратаря  ", "tep": {"p": 4, "sk": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0]}},
+"dC": {"en": "Use Your Head    ", "ru": "Работай головой     ", "tep": {"p": 2, "sk": [0,0,1,1,0, 1,0,0,0,0, 0,0,0,0,1]}},
+"dD": {"en": "Stop the Attacker", "ru": "Остановить нападение", "tep": {"p": 3, "sk": [1,1,0,0,1, 0,1,0,0,0, 0,1,0,0,0]}},
+"dE": {"en": "Def Crosses      ", "ru": "Защита от навесов   ", "tep": {"p": 3, "sk": [0,1,0,1,1, 0,0,1,0,0, 0,0,0,0,0]}},
+"dF": {"en": "Video Analysis   ", "ru": "Видеоанализ         ", "tep": {"p": 1, "sk": [0,0,1,0,1, 0,0,0,0,0, 0,0,0,0,1]}},
+"dG": {"en": "Hold the Line    ", "ru": "Держать линию       ", "tep": {"p": 3, "sk": [0,1,1,0,0, 0,0,0,0,0, 0,0,0,0,0]}},
+"dH": {"en": "Warm-Up          ", "ru": "Разминка            ", "tep": {"p": 1, "sk": [0,0,0,1,0, 0,0,0,0,0, 1,0,1,0,0]}},
+"dI": {"en": "Stretch          ", "ru": "Растяжка            ", "tep": {"p": 2, "sk": [0,0,0,0,0, 0,0,0,0,0, 1,1,0,1,0]}},
+"dJ": {"en": "Sprint           ", "ru": "Ускорение           ", "tep": {"p": 5, "sk": [0,0,0,0,0, 0,1,0,0,0, 1,0,0,1,0]}},
+"dK": {"en": "Carioca          ", "ru": "Кариока с лестницей ", "tep": {"p": 2, "sk": [0,0,0,0,0, 0,0,0,0,0, 0,0,1,1,0]}},
+"dL": {"en": "Long Run         ", "ru": "Долгий забег        ", "tep": {"p": 3, "sk": [0,0,0,0,0, 0,0,0,0,0, 1,0,0,1,0]}},
+"dM": {"en": "Gym              ", "ru": "Качалка             ", "tep": {"p": 5, "sk": [0,0,0,0,0, 0,0,0,0,0, 1,1,0,0,0]}},
+"dN": {"en": "Shuttle Runs     ", "ru": "Челночный бег       ", "tep": {"p": 4, "sk": [0,0,0,0,1, 0,0,0,0,0, 0,1,0,1,0]}},
+"dO": {"en": "Hurdle Jumps     ", "ru": "Бег с препятствиями ", "tep": {"p": 4, "sk": [0,0,0,0,1, 0,0,0,0,0, 0,0,1,1,0]}}
+};
+
+var calcName = {
+"tep": {"en": "Summa points", "ru": "Сумма очков опыта"},
+"per": {"en": "Allocation (%)", "ru": "Распределение (%)"},
+};
+var positName = {
+"DC":  [0,0,0,0,0, 1,1,1,1,1, 0,0,0,1,1],
+"DL":  [0,0,0,1,0, 1,1,0,1,1, 0,1,0,0,1],
+"DMC": [0,0,0,0,0, 0,1,1,1,1, 0,0,0,1,0],
+"DML": [0,0,0,1,0, 0,1,0,1,1, 1,0,0,1,1],
+"MC":  [0,0,0,1,0, 0,0,1,0,1, 0,1,1,0,0],
+"ML":  [1,1,0,1,1, 0,0,0,1,1, 0,1,1,0,0],
+"AMC": [1,1,1,0,1, 0,0,1,0,0, 0,1,1,0,0],
+"AML": [1,1,1,1,1, 0,0,0,0,0, 0,1,1,0,0],
+"ST":  [1,1,0,0,1, 0,0,1,0,0, 1,0,1,0,0]
+};
+var buttonName = { "DC":  0, "DL":  0, "DMC": 0, "DML": 0, "MC":  0, "ML":  0, "AMC": 0, "AML": 0, "ST":  0 };
+var levelDrill = {
+"d1":  0, "d2":  0, "d3":  0, "d4":  0, "d5":  0, "d6":  0, "d7":  0, "d8":  0, "d9":  0, "dA":  0, "dB":  0, "dC":  0, 
+"dD":  0, "dE":  0, "dF":  0, "dG":  0, "dH":  0, "dI":  0, "dJ":  0, "dK":  0, "dL":  0, "dM":  0, "dN":  0, "dO":  0
+};
+var selDrill = {
+"d1": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0],
+"d2": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0],
+"d3": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0],
+"d4": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0],
+"d5": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0],
+"d6": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0],
+"d7": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0],
+"d8": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0],
+"d9": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0],
+"dA": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0],
+"dB": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0],
+"dC": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0],
+"dD": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0],
+"dE": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0],
+"dF": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0],
+"dG": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0],
+"dH": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0],
+"dI": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0],
+"dJ": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0],
+"dK": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0],
+"dL": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0],
+"dM": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0],
+"dN": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0],
+"dO": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0]
+};
+var calcs = {
+"d1": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0],
+"d2": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0],
+"d3": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0],
+"d4": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0],
+"d5": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0],
+"d6": [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0]
+};
+
+var training = ['', '', '', '', '', ''];
+
+function delDrill(elem){
+	idx = 1 * elem.id.replace(/m/, "");
+	training[idx-1] = '';
+	calculate();
+}
+function addDrill(elem){
+	var ok = 0;
+	idx = elem.id.replace(/b/, "d");
+	for(var i in training){
+		if(training[i]==''){
+			training[i] = idx;
+			ok = 1;
+			break;
+		}
+	}
+	if(ok == 0){alert("6 drills");}
+	calculate();
+}
+function calculate(){
+	var summGray = [1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1];
+	for(var key in buttonName){
+		if(buttonName[key] == 1){
+			for(var ii = 0; ii < 15; ii++){
+				summGray[ii] = summGray[ii] * positName[key][ii];
+			}
+		}
+	}
+	var pointGK = 0;
+	for(var i in training){
+		if(training[i] != ''){
+			idx = training[i];
+			document.getElementById('c' + (+i+1) + '0').innerHTML = drillName[idx][language];
+			var calc = new Array(15);
+			var countGray = 0;
+			var countWhite = 0;
+			var balanseGray = 0;
+			for(var x = 0; x < 15; x++){
+				calc[x] = selDrill[idx][x];
+				if(calc[x]!=0){ calc[x] = +calc[x]+pointGK}; 
+				if(summGray[x]==1 && calc[x]>0) {
+					countGray++; 
+					var tempGray = calc[x]; 
+					balanseGray = balanseGray + (tempGray - (+calc[x] * 0.75)); 
+				}
+				if(summGray[x]==0 && calc[x]>0) { countWhite = countWhite + 1;}
+			}
+			balanseGray = 1 + (countGray / (countWhite * 4));
+			if(idx == 'dB') { pointGK = pointGK + drillName['dB'].tep.p;} else { pointGK = 0; }
+			if(countWhite > 0){
+				for(var x = 0; x < 15; x++){
+					if(summGray[x]==0 && calc[x]>0) {calc[x] = (+calc[x] * balanseGray) / (countGray + countWhite); }
+					if(summGray[x]==1 && calc[x]>0) {calc[x] = (+calc[x] * 0.75) / (countGray + countWhite); }
+				}
+			}
+			var ind1 = 'd' + (+i+1);
+			for(var x = 0; x < 15; x++){ calcs[ind1][x] = calc[x]; } 
+			calcs[ind1][15] = selDrill[idx][15];
+			for(var x = 0; x < 15; x++){ 
+				if(calc[x]>0){ 
+					document.getElementById('c' + (+i+1) + alf[x]).innerHTML = Number(calc[x]).toFixed(2);
+				}
+			}
+			document.getElementById('c' + (+i+1) + 'G').innerHTML = selDrill[idx][15].toFixed(2);
+			document.getElementById('c' + (+i+1) + '0').innerHTML = drillName[idx][language];
+		} else {
+			for(var x = 0; x < 16; x++){
+				document.getElementById('c' + (+i+1) + alf[x]).innerHTML = '';
+			}
+			document.getElementById('c' + (+i+1) + '0').innerHTML = '';
+			var ind1 = 'd' + (+i+1);
+			for(var x = 0; x < 16; x++){ calcs[ind1][x] = 0; } 
+
+		}
+	}
+
+	for(var x = 0; x < 16; x++){
+		document.getElementById('c7' + alf[x]).innerHTML = '';
+		document.getElementById('c8' + alf[x]).innerHTML = '';
+	}
+	var ncalc = [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0];
+	var summPoint = 0;
+	for(var i in calcs){
+		for(var x = 0; x < 15; x++){
+			ncalc[x] = +ncalc[x] + Number(calcs[i][x]);
+			summPoint = +summPoint + Number(calcs[i][x]);
+		}
+		ncalc[15] = +ncalc[15] + Number(calcs[i][15]);
+	}
+	for(var x = 0; x < 15; x++){
+		if(ncalc[x]>0){
+			document.getElementById('c7' + alf[x]).innerHTML = (ncalc[x]).toFixed(2);
+			document.getElementById('c8' + alf[x]).innerHTML = ((ncalc[x]/summPoint)*100).toFixed(1);
+		}
+	}
+	if(ncalc[15]>0){ document.getElementById('c7' + alf[15]).innerHTML = (ncalc[15]).toFixed(2);}
+	for(var gr in alf){
+		var count = 0;
+		var grays = 0;
+		for(gs in summGray){
+			var temp = selDrill['d' + alf[gr]][gs];
+			if(temp > 0){ count = count + 1; 
+				if(summGray[gs] == 1){ grays = grays + 1;}
+			}
+		}
+		try {
+		if(grays > 0){
+			document.getElementById('sn' + alf[gr]).style.opacity = 0.7;
+		} else {
+			document.getElementById('sn' + alf[gr]).style.opacity = 1.0;
+		}
+		} catch(ee) {
+			alert('sn' + alf[gr]);
+		}
+	}
+}
+
+var language = 'ru';
+function setLanguage(lng){
+	for(var i in skillField){ document.getElementById(skillField[i]).innerHTML = skillName[skillField[i]][lng];}
+	for(var i in alf){
+		idx = 's' + alf[i] + '0';
+		ind = 'd' + alf[i];
+		document.getElementById(idx).innerHTML = drillName[ind][lng];
+	}
+	calculate();
+	document.getElementById('c70').innerHTML = calcName.tep[lng];
+	document.getElementById('c80').innerHTML = calcName.per[lng];
+}
+function setLang(){
+	var val = document.getElementById('selan').value;
+	language = val;
+	setLanguage(val);
+}
+function setValue(){
+	for(var i in alf){
+		var k = [0, 1.0, 1.1, 1.2, 1.3];
+		for(var f in al1){
+			point = drillName['d'+alf[i]].tep.sk[f] * k[levelDrill['d'+alf[f]]] * drillName['d'+alf[i]].tep.p;
+			selDrill['d' + alf[i]][f] = point.toFixed(2);
+			if(point > 0){
+				document.getElementById('s' + alf[i] + al1[f]).innerHTML = point.toFixed(2);
+			}
+                        selDrill['d' + alf[i]][15] = drillName['d'+alf[i]].tep.p * 0.75;
+			document.getElementById('s' + alf[i] + 'G').innerHTML = selDrill['d' + alf[i]][15].toFixed(2);
+		}
+	}
+}
+
+function setLevelDrill(){
+	alert('test set level drill');
+}
+function setGray(elem){
+	if(buttonName[elem.innerHTML] == 0){
+		elem.style.opacity = 0.4;
+		elem.style.fontWeight = 'lighter';
+		buttonName[elem.innerHTML] = 1;
+	} else {
+		elem.style.opacity = 1.0;
+		elem.style.fontWeight = 'normal';
+		buttonName[elem.innerHTML] = 0;
+	}
+	setGrayGlobal();
+	calculate();
+}
+
+function setGrayGlobal(){
+	var summGray = [1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1];
+	for(var key in buttonName){
+		if(buttonName[key] == 1){
+			for(var i = 0; i < 15; i++){
+				summGray[i] = summGray[i] * positName[key][i];
+			}
+		}
+	}
+	for(var x = 0; x < 15; x++){
+		if(summGray[x] == 1){
+			var opacity = 0.3;
+			var fbold = 'lighter';
+		} else {
+			var opacity = 1.0;
+			var fbold = 'normal';
+		}
+		var elems = document.getElementsByClassName("sk" + alf[x]);
+		for(var i = 0; i < elems.length; i++){
+			elems[i].style.opacity = opacity;
+			elems[i].style.fontWeight = fbold;
+		}
+
+	}
+}
+function autoRun(){
+	var scrDiv = document.getElementById('scr');
+	var nosDiv = document.getElementById('nos');
+	nosDiv.style.paddingRight = scrDiv.offsetWidth - scrDiv.clientWidth;
+	for(var i in alf){ levelDrill['d'+alf[i]] = 4; }
+	setValue();
+	setGrayGlobal();
+	setLanguage(language);
+}
+</script>
+</head>
+<body onload="autoRun()">
+<div id="pos" style="width: 1000px; height: 50px; border: none;">
+<button class="def pos" onclick="setGray(this)" style="opacity: 1; font-weight: normal;">DC</button>
+<button class="def pos" onclick="setGray(this)" style="opacity: 1; font-weight: normal;">DL</button>
+<button class="mid pos" onclick="setGray(this)">DMC</button>
+<button class="mid pos" onclick="setGray(this)">DML</button>
+<button class="mid pos" onclick="setGray(this)">MC</button>
+<button class="mid pos" onclick="setGray(this)">ML</button>
+<button class="mid pos" onclick="setGray(this)">AMC</button>
+<button class="mid pos" onclick="setGray(this)">AML</button>
+<button class="off pos" onclick="setGray(this)">ST</button>
+</div>
+<hr>
+<div id="nos" style="padding-right: 19px;">
+<table id="top">
+<tbody><tr class="rot">
+<td class="nam">
+<button class="qv" onclick="location.reload()">R</button>
+<button class="qv" onclick="setLevelDrill()">C</button>
+<select id="selan" onchange="setLang()">
+<option value="ru">Russian</option>
+<option value="en">English</option>
+</select>
+</td>
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="rot" id="ns1">Отбор мяча</p></td>
+<td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="rot" id="ns2">Опека</p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="rot" id="ns3">Позиции</p></td>
+<td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="rot" id="ns4">Голова</p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="rot" id="ns5">Храбрость</p></td>
+<td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="rot" id="ns6">Передача</p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="rot" id="ns7">Дриблинг</p></td>
+<td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="rot" id="ns8">Навес</p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="rot" id="ns9">Удар</p></td>
+<td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="rot" id="nsA">Завершение</p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="rot" id="nsB">Физ. форма</p></td>
+<td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="rot" id="nsC">Сила</p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="rot" id="nsD">Агрессия</p></td>
+<td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="rot" id="nsE">Скорость</p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="rot" id="nsF">Креатив</p></td>
+<td class="rot sk0">%</td>
+</tr>
+</tbody></table>
+<hr>
+<table id="cal">
+<tbody><tr class="cal cl1"> <td class="nam skN"><button onclick="delDrill(this)" id="m1" class="sel">-</button><p class="cal" id="c10"></p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c11"></p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c12"></p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c13"></p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c14"></p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c15"></p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c16"></p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c17"></p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c18"></p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c19"></p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c1A"></p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c1B"></p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c1C"></p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c1D"></p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c1E"></p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c1F"></p></td> <td class="rot sk0"><p class="cal" id="c1G"></p></td> </tr>
+<tr class="cal cl2"> <td class="nam skN"><button onclick="delDrill(this)" id="m2" class="sel">-</button><p class="cal" id="c20"></p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c21"></p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c22"></p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c23"></p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c24"></p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c25"></p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c26"></p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c27"></p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c28"></p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c29"></p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c2A"></p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c2B"></p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c2C"></p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c2D"></p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c2E"></p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c2F"></p></td> <td class="rot sk0"><p class="cal" id="c2G"></p></td> </tr>
+<tr class="cal cl3"> <td class="nam skN"><button onclick="delDrill(this)" id="m3" class="sel">-</button><p class="cal" id="c30"></p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c31"></p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c32"></p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c33"></p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c34"></p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c35"></p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c36"></p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c37"></p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c38"></p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c39"></p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c3A"></p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c3B"></p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c3C"></p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c3D"></p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c3E"></p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c3F"></p></td> <td class="rot sk0"><p class="cal" id="c3G"></p></td> </tr>
+<tr class="cal cl4"> <td class="nam skN"><button onclick="delDrill(this)" id="m4" class="sel">-</button><p class="cal" id="c40"></p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c41"></p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c42"></p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c43"></p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c44"></p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c45"></p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c46"></p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c47"></p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c48"></p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c49"></p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c4A"></p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c4B"></p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c4C"></p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c4D"></p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c4E"></p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c4F"></p></td> <td class="rot sk0"><p class="cal" id="c4G"></p></td> </tr>
+<tr class="cal cl5"> <td class="nam skN"><button onclick="delDrill(this)" id="m5" class="sel">-</button><p class="cal" id="c50"></p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c51"></p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c52"></p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c53"></p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c54"></p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c55"></p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c56"></p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c57"></p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c58"></p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c59"></p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c5A"></p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c5B"></p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c5C"></p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c5D"></p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c5E"></p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c5F"></p></td> <td class="rot sk0"><p class="cal" id="c5G"></p></td> </tr>
+<tr class="cal cl6"> <td class="nam skN"><button onclick="delDrill(this)" id="m6" class="sel">-</button><p class="cal" id="c60"></p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c61"></p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c62"></p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c63"></p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c64"></p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c65"></p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c66"></p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c67"></p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c68"></p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c69"></p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c6A"></p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c6B"></p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c6C"></p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c6D"></p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c6E"></p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c6F"></p></td> <td class="rot sk0"><p class="cal" id="c6G"></p></td> </tr>
+<tr class="cal cl7"> <td class="nam skN"><p class="cal" id="c70">Сумма очков опыта</p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c71"></p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c72"></p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c73"></p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c74"></p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c75"></p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c76"></p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c77"></p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c78"></p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c79"></p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c7A"></p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c7B"></p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c7C"></p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c7D"></p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c7E"></p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c7F"></p></td> <td class="rot sk0"><p class="cal" id="c7G"></p></td> </tr>
+<tr class="cal cl8"> <td class="nam skN"><p class="cal" id="c80">Распределение (%)</p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c81"></p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c82"></p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c83"></p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c84"></p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c85"></p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c86"></p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c87"></p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c88"></p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c89"></p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c8A"></p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c8B"></p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c8C"></p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c8D"></p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c8E"></p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="cal" id="c8F"></p></td> <td class="rot sk0"><p class="cal" id="c8G"></p></td> </tr>
+</tbody></table>
+</div>
+<hr>
+<div id="scr" style="width: 1000px; height: 409px; overflow-y: scroll; background: #897456; border: none;">
+<table id="sel">
+
+<tbody><tr class="cal off"> <td class="nam" id="sn1" style="opacity: 0.7;"><button onclick="addDrill(this)" id="b1" class="sel">+</button><p class="sel" id="s10">Пас, рывок, удар    </p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s11"></p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s12"></p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s13"></p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s14"></p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s15"></p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s16">2.60</p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s17"></p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s18"></p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s19">2.60</p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s1A"></p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s1B"></p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s1C"></p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s1D"></p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s1E">2.60</p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s1F"></p></td> <td class="rot sk0"><p class="sel" id="s1G">1.50</p></td></tr>
+
+<tr class="cal off"> <td class="nam" id="sn2" style="opacity: 0.7;"><button onclick="addDrill(this)" id="b2" class="sel">+</button><p class="sel" id="s20">Быстрые контратаки  </p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s21"></p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s22"></p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s23"></p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s24"></p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s25"></p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s26">6.50</p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s27"></p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s28">6.50</p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s29"></p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s2A">6.50</p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s2B"></p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s2C"></p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s2D"></p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s2E"></p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s2F">6.50</p></td> <td class="rot sk0"><p class="sel" id="s2G">3.75</p></td> </tr>
+
+<tr class="cal off"> <td class="nam" id="sn3" style="opacity: 0.7;"><button onclick="addDrill(this)" id="b3" class="sel">+</button><p class="sel" id="s30">Тренировка техники  </p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s31"></p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s32"></p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s33"></p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s34">1.30</p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s35"></p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s36"></p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s37">1.30</p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s38"></p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s39"></p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s3A"></p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s3B"></p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s3C"></p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s3D"></p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s3E"></p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s3F">1.30</p></td> <td class="rot sk0"><p class="sel" id="s3G">0.75</p></td> </tr>
+
+<tr class="cal off"> <td class="nam" id="sn4" style="opacity: 0.7;"><button onclick="addDrill(this)" id="b4" class="sel">+</button><p class="sel" id="s40">Техника ударов      </p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s41"></p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s42"></p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s43"></p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s44"></p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s45"></p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s46"></p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s47"></p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s48"></p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s49">3.90</p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s4A">3.90</p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s4B"></p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s4C">3.90</p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s4D"></p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s4E"></p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s4F"></p></td> <td class="rot sk0"><p class="sel" id="s4G">2.25</p></td> </tr>
+
+<tr class="cal off"> <td class="nam" id="sn5" style="opacity: 0.7;"><button onclick="addDrill(this)" id="b5" class="sel">+</button><p class="sel" id="s50">Стандарты           </p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s51"></p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s52">3.90</p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s53"></p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s54">3.90</p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s55"></p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s56"></p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s57"></p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s58">3.90</p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s59">3.90</p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s5A"></p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s5B"></p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s5C"></p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s5D"></p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s5E"></p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s5F"></p></td> <td class="rot sk0"><p class="sel" id="s5G">2.25</p></td> </tr>
+
+<tr class="cal off"> <td class="nam" id="sn6" style="opacity: 0.7;"><button onclick="addDrill(this)" id="b6" class="sel">+</button><p class="sel" id="s60">Слалом              </p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s61"></p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s62"></p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s63"></p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s64"></p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s65"></p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s66">5.20</p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s67">5.20</p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s68"></p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s69"></p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s6A"></p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s6B">5.20</p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s6C"></p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s6D"></p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s6E">5.20</p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s6F"></p></td> <td class="rot sk0"><p class="sel" id="s6G">3.00</p></td> </tr>
+
+<tr class="cal off"> <td class="nam" id="sn7" style="opacity: 0.7;"><button onclick="addDrill(this)" id="b7" class="sel">+</button><p class="sel" id="s70">Игра флангами       </p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s71"></p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s72"></p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s73"></p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s74">5.20</p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s75"></p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s76"></p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s77"></p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s78">5.20</p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s79">5.20</p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s7A">5.20</p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s7B"></p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s7C"></p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s7D"></p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s7E"></p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s7F"></p></td> <td class="rot sk0"><p class="sel" id="s7G">3.00</p></td> </tr>
+
+<tr class="cal off"> <td class="nam" id="sn8" style="opacity: 0.7;"><button onclick="addDrill(this)" id="b8" class="sel">+</button><p class="sel" id="s80">Один на один        </p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s81">2.60</p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s82"></p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s83"></p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s84"></p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s85"></p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s86"></p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s87">2.60</p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s88"></p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s89"></p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s8A">2.60</p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s8B"></p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s8C"></p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s8D"></p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s8E"></p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s8F"></p></td> <td class="rot sk0"><p class="sel" id="s8G">1.50</p></td> </tr>
+
+<tr class="cal def"> <td class="nam" id="sn9" style="opacity: 0.7;"><button onclick="addDrill(this)" id="b9" class="sel">+</button><p class="sel" id="s90">Прессинг            </p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s91">5.20</p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s92">5.20</p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s93">5.20</p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s94"></p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s95">5.20</p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s96"></p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s97"></p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s98"></p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s99"></p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s9A"></p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s9B"></p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s9C"></p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s9D">5.20</p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s9E"></p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="s9F"></p></td> <td class="rot sk0"><p class="sel" id="s9G">3.00</p></td> </tr>
+
+<tr class="cal def"> <td class="nam" id="snA" style="opacity: 0.7;"><button onclick="addDrill(this)" id="bA" class="sel">+</button><p class="sel" id="sA0">Собачка             </p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sA1">2.60</p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sA2"></p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sA3">2.60</p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sA4"></p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sA5"></p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sA6">2.60</p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sA7"></p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sA8"></p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sA9"></p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sAA"></p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sAB">2.60</p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sAC"></p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sAD">2.60</p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sAE"></p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sAF"></p></td> <td class="rot sk0"><p class="sel" id="sAG">1.50</p></td> </tr>
+
+<tr class="cal def"> <td class="nam" id="snB" style="opacity: 1;"><button onclick="addDrill(this)" id="bB" class="sel">+</button><p class="sel" id="sB0">Тренировка вратаря  </p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sB1"></p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sB2"></p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sB3"></p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sB4"></p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sB5"></p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sB6"></p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sB7"></p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sB8"></p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sB9"></p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sBA"></p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sBB"></p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sBC"></p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sBD"></p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sBE"></p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sBF"></p></td> <td class="rot sk0"><p class="sel" id="sBG">3.00</p></td> </tr>
+
+<tr class="cal def"> <td class="nam" id="snC" style="opacity: 0.7;"><button onclick="addDrill(this)" id="bC" class="sel">+</button><p class="sel" id="sC0">Работай головой     </p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sC1"></p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sC2"></p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sC3">2.60</p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sC4">2.60</p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sC5"></p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sC6">2.60</p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sC7"></p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sC8"></p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sC9"></p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sCA"></p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sCB"></p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sCC"></p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sCD"></p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sCE"></p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sCF">2.60</p></td> <td class="rot sk0"><p class="sel" id="sCG">1.50</p></td> </tr>
+
+<tr class="cal def"> <td class="nam" id="snD" style="opacity: 0.7;"><button onclick="addDrill(this)" id="bD" class="sel">+</button><p class="sel" id="sD0">Остановить нападение</p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sD1">3.90</p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sD2">3.90</p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sD3"></p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sD4"></p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sD5">3.90</p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sD6"></p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sD7">3.90</p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sD8"></p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sD9"></p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sDA"></p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sDB"></p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sDC">3.90</p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sDD"></p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sDE"></p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sDF"></p></td> <td class="rot sk0"><p class="sel" id="sDG">2.25</p></td> </tr>
+
+<tr class="cal def"> <td class="nam" id="snE" style="opacity: 0.7;"><button onclick="addDrill(this)" id="bE" class="sel">+</button><p class="sel" id="sE0">Защита от навесов   </p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sE1"></p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sE2">3.90</p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sE3"></p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sE4">3.90</p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sE5">3.90</p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sE6"></p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sE7"></p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sE8">3.90</p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sE9"></p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sEA"></p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sEB"></p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sEC"></p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sED"></p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sEE"></p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sEF"></p></td> <td class="rot sk0"><p class="sel" id="sEG">2.25</p></td> </tr>
+
+<tr class="cal def"> <td class="nam" id="snF" style="opacity: 0.7;"><button onclick="addDrill(this)" id="bF" class="sel">+</button><p class="sel" id="sF0">Видеоанализ         </p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sF1"></p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sF2"></p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sF3">1.30</p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sF4"></p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sF5">1.30</p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sF6"></p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sF7"></p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sF8"></p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sF9"></p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sFA"></p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sFB"></p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sFC"></p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sFD"></p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sFE"></p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sFF">1.30</p></td> <td class="rot sk0"><p class="sel" id="sFG">0.75</p></td> </tr>
+
+<tr class="cal def"> <td class="nam" id="snG" style="opacity: 0.7;"><button onclick="addDrill(this)" id="bG" class="sel">+</button><p class="sel" id="sG0">Держать линию       </p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sG1"></p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sG2">3.90</p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sG3">3.90</p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sG4"></p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sG5"></p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sG6"></p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sG7"></p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sG8"></p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sG9"></p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sGA"></p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sGB"></p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sGC"></p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sGD"></p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sGE"></p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sGF"></p></td> <td class="rot sk0"><p class="sel" id="sGG">2.25</p></td> </tr>
+
+<tr class="cal psi"> <td class="nam" id="snH" style="opacity: 0.7;"><button onclick="addDrill(this)" id="bH" class="sel">+</button><p class="sel" id="sH0">Разминка            </p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sH1"></p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sH2"></p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sH3"></p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sH4">1.30</p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sH5"></p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sH6"></p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sH7"></p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sH8"></p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sH9"></p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sHA"></p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sHB">1.30</p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sHC"></p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sHD">1.30</p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sHE"></p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sHF"></p></td> <td class="rot sk0"><p class="sel" id="sHG">0.75</p></td> </tr>
+
+<tr class="cal psi"> <td class="nam" id="snI" style="opacity: 0.7;"><button onclick="addDrill(this)" id="bI" class="sel">+</button><p class="sel" id="sI0">Растяжка            </p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sI1"></p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sI2"></p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sI3"></p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sI4"></p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sI5"></p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sI6"></p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sI7"></p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sI8"></p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sI9"></p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sIA"></p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sIB">2.60</p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sIC">2.60</p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sID"></p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sIE">2.60</p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sIF"></p></td> <td class="rot sk0"><p class="sel" id="sIG">1.50</p></td> </tr>
+
+<tr class="cal psi"> <td class="nam" id="snJ" style="opacity: 0.7;"><button onclick="addDrill(this)" id="bJ" class="sel">+</button><p class="sel" id="sJ0">Ускорение           </p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sJ1"></p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sJ2"></p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sJ3"></p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sJ4"></p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sJ5"></p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sJ6"></p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sJ7">6.50</p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sJ8"></p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sJ9"></p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sJA"></p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sJB">6.50</p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sJC"></p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sJD"></p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sJE">6.50</p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sJF"></p></td> <td class="rot sk0"><p class="sel" id="sJG">3.75</p></td> </tr>
+
+<tr class="cal psi"> <td class="nam" id="snK" style="opacity: 0.7;"><button onclick="addDrill(this)" id="bK" class="sel">+</button><p class="sel" id="sK0">Кариока с лестницей </p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sK1"></p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sK2"></p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sK3"></p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sK4"></p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sK5"></p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sK6"></p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sK7"></p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sK8"></p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sK9"></p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sKA"></p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sKB"></p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sKC"></p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sKD">2.60</p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sKE">2.60</p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sKF"></p></td> <td class="rot sk0"><p class="sel" id="sKG">1.50</p></td> </tr>
+
+<tr class="cal psi"> <td class="nam" id="snL" style="opacity: 0.7;"><button onclick="addDrill(this)" id="bL" class="sel">+</button><p class="sel" id="sL0">Долгий забег        </p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sL1"></p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sL2"></p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sL3"></p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sL4"></p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sL5"></p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sL6"></p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sL7"></p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sL8"></p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sL9"></p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sLA"></p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sLB">3.90</p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sLC"></p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sLD"></p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sLE">3.90</p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sLF"></p></td> <td class="rot sk0"><p class="sel" id="sLG">2.25</p></td> </tr>
+
+<tr class="cal psi"> <td class="nam" id="snM" style="opacity: 0.7;"><button onclick="addDrill(this)" id="bM" class="sel">+</button><p class="sel" id="sM0">Качалка             </p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sM1"></p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sM2"></p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sM3"></p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sM4"></p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sM5"></p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sM6"></p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sM7"></p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sM8"></p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sM9"></p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sMA"></p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sMB">6.50</p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sMC">6.50</p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sMD"></p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sME"></p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sMF"></p></td> <td class="rot sk0"><p class="sel" id="sMG">3.75</p></td> </tr>
+
+<tr class="cal psi"> <td class="nam" id="snN" style="opacity: 0.7;"><button onclick="addDrill(this)" id="bN" class="sel">+</button><p class="sel" id="sN0">Челночный бег       </p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sN1"></p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sN2"></p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sN3"></p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sN4"></p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sN5">5.20</p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sN6"></p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sN7"></p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sN8"></p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sN9"></p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sNA"></p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sNB"></p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sNC">5.20</p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sND"></p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sNE">5.20</p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sNF"></p></td> <td class="rot sk0"><p class="sel" id="sNG">3.00</p></td> </tr>
+
+<tr class="cal psi"> <td class="nam" id="snO" style="opacity: 0.7;"><button onclick="addDrill(this)" id="bO" class="sel">+</button><p class="sel" id="sO0">Бег с препятствиями </p></td> 
+<td class="rot sk1" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sO1"></p></td> <td class="rot sk2" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sO2"></p></td>
+<td class="rot sk3" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sO3"></p></td> <td class="rot sk4" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sO4"></p></td>
+<td class="rot sk5" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sO5">5.20</p></td> <td class="rot sk6" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sO6"></p></td>
+<td class="rot sk7" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sO7"></p></td> <td class="rot sk8" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sO8"></p></td>
+<td class="rot sk9" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sO9"></p></td> <td class="rot skA" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sOA"></p></td>
+<td class="rot skB" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sOB"></p></td> <td class="rot skC" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sOC"></p></td>
+<td class="rot skD" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sOD">5.20</p></td> <td class="rot skE" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sOE">5.20</p></td>
+<td class="rot skF" style="opacity: 0.3; font-weight: lighter;"><p class="sel" id="sOF"></p></td> <td class="rot sk0"><p class="sel" id="sOG">3.00</p></td> </tr>
+
+</tbody></table></div>
+
+</body></html>
